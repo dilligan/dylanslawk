@@ -1,15 +1,13 @@
-ARG BASE_IMAGE=us-central1-docker.pkg.dev/ncvgl-gcp/cloud-run-source-deploy/slawk-base:latest
-
-# ── Stage 1: Build frontend (deps from base) ────────────────────────
-FROM ${BASE_IMAGE} AS frontend-build
+# ── Stage 1: Build frontend ─────────────────────────────────────────
+FROM node:22-alpine AS frontend-build
 WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
 COPY frontend/ ./
 RUN npx vite build
 
-# ── Stage 2: Build backend (deps from base) ─────────────────────────
-FROM ${BASE_IMAGE} AS backend-build
+# ── Stage 2: Build backend ──────────────────────────────────────────
+FROM node:22-alpine AS backend-build
 WORKDIR /app/backend
 COPY backend/ ./
 RUN npx prisma generate
